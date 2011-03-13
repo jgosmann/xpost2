@@ -7,7 +7,7 @@ require_once 'Hamcrest/hamcrest.php';
 
 require_once 'include/helpers.php';
 
-class WordpressDriver extends PHPUnit_Extensions_SeleniumTestCase {
+class WordpressDbInstaller extends PHPUnit_Extensions_SeleniumTestCase {
 
     public function setUp() {
         $this->setBrowser(TEST_BROWSER);

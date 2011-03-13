@@ -14,7 +14,7 @@ EOT
 }
 
 
-require_once 'test-setup-config.php';
+require_once 'config-testenv-setup.php';
 
 function confirmOverride() {
     $confirmCode = gettext('yes');

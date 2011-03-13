@@ -1,6 +1,6 @@
 <?php
 
-require_once 'test-runtime-config.php';
+require_once 'config-test-runtime.php';
 
 /** EMail address used for wordpress users. */
 define('WP_USER_MAIL', '');
