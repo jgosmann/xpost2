@@ -1,5 +1,5 @@
-#Sun Mar 13 13:04:01 CET 2011
+#Sun Mar 13 23:27:19 CET 2011
 eclipse.preferences.version=1
-include_path=0;/xpost2
+include_path=0;/xpost2\u00051;/opt/local/lib/php
 phpVersion=php5
 use_asp_tags_as_php=false
