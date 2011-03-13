@@ -13,22 +13,8 @@ EOT
 );
 }
 
-$showUsage = $argc > 1 && ($argv[1] == '-h' || $argv[1] == '--help');
-if ($showUsage) {
-    printUsage();
-    exit(0);
-}
 
-if ($argc > 2) {
-    echo $argv[0] . ': ' . gettext('Too many arguments.\n');
-    printUsage();
-    exit(-1);
-}
-
-require_once 'test-config.php';
-
-
-
+require_once 'test-setup-config.php';
 
 function confirmOverride() {
     $confirmCode = gettext('yes');
@@ -46,10 +32,9 @@ EOT
     }
 }
 
-function getWpVersionToInstall($argc, $argv) {
-    if ($argc > 1) {
-        return $argv[1];
-    } else {
+function getWpVersionToInstall() {
+    $version = readline('Wordpress version to fetch [enter for latest]: ');
+    if ($version == '') {
         $version = system('svn list '
             . escapeshellarg(joinPaths(WP_SVN, 'tags')) . '" | tail -1');
         return trim($version, '/');
@@ -138,7 +123,7 @@ function getDatabaseScript($index) {
 }
 
 confirmOverride();
-$version = getWpVersionToInstall($argc, $argv);
+$version = getWpVersionToInstall();
 prepareHtdocsDir();
 printf(gettext("Fetching Wordpress version %s ...\n"), $version);
 fetchWpVersion($version);

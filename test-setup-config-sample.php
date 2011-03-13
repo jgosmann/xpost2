@@ -1,14 +1,6 @@
 <?php
 
-/**
- * Directory for the testing environment Wordpress installations.
- *
- * All contents except .* will get removed when using the setup-test-env.php
- * script.
- *
- * Example value: /opt/local/username/www/wp-test-env
- */
-define('HTDOCS_DIR', '');
+require_once 'test-runtime-config.php'
 
 /** EMail address used for wordpress users. */
 define('WP_USER_MAIL', '');
@@ -39,9 +31,6 @@ define('DB_CHARSET', 'utf8');
 
 /** The Database Collate type. Don't change this if in doubt. */
 define('DB_COLLATE', '');
-
-/** Prefix used for the testing environment Wordpress installations. */
-define('WP_INST_PREFIX', 'wp');
 
 /** SVN address for fetching Wordpress versions. */
 define('WP_SVN', 'https://core.svn.wordpress.org/');
