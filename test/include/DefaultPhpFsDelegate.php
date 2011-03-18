@@ -39,6 +39,18 @@ class DefaultPhpFsDelegate implements FsDelegate {
 
         return $entries;
     }
+
+    public function removeDir($path) {
+        if (!rmdir($path)) {
+            throw new FsException("Could not remove directory \"$path\".");
+        }
+    }
+
+    public function unlink($path) {
+        if (!unlink($path)) {
+            throw new FsException("Could not unlink file \"$path\".");
+        }
+    }
 }
 
 ?>

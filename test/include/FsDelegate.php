@@ -6,6 +6,8 @@ interface FsDelegate {
     public function fileExists($path);
     public function isDir($path);
     public function readDir($path);
+    public function removeDir($path);
+    public function unlink($path);
 }
 
 ?>

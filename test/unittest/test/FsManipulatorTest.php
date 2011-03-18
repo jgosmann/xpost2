@@ -112,6 +112,33 @@ class FsManipulatorTest extends PHPUnit_Framework_TestCase {
 
         $this->fsManipulator->ensureDirExists($dir);
     }
+
+
+
+    public function testRemovesFile() {
+        $file = 'file';
+
+        $this->fsDelegate->shouldReceive('unlink')->with($file)->once();
+
+        $this->fsManipulator->remove($file);
+    }
+
+    public function testRemovesDirRecursive() {
+        $dir = 'dir';
+        $file = 'file';
+        $pathToFile = joinPaths($dir, $file);
+
+        $this->fsDelegate->shouldReceive('isDir')->with($dir)->andReturn(true);
+        $this->fsDelegate->shouldReceive('isDir')->with($pathToFile)
+            ->andReturn(false);
+        $this->fsDelegate->shouldReceive('readDir')->with($dir)
+            ->andReturn(array($file));
+        $this->fsDelegate->shouldReceive('unlink')->with($pathToFile)->once();
+        $this->fsDelegate->shouldReceive('removeDir')->with($dir)->once();
+
+        $this->fsManipulator->remove($dir);
+    }
+
 }
 
 ?>

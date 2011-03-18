@@ -11,8 +11,12 @@ class FsManipulator {
 
     private $fsDelegate;
 
-    public function __construct(FsDelegate $fsDelegate) {
-        $this->fsDelegate = $fsDelegate;
+    public function __construct(FsDelegate $fsDelegate = null) {
+        if ($fsDelegate) {
+            $this->fsDelegate = $fsDelegate;
+        } else {
+            $this->fsDelegate = new DefaultPhpFsDelegate();
+        }
     }
 
     public function copy($src, $dest) {
@@ -37,5 +41,17 @@ class FsManipulator {
         }
     }
 
+    public function remove($path) {
+        if ($this->fsDelegate->isDir($path)) {
+            foreach ($this->fsDelegate->readDir($path) as $entry) {
+                $this->remove(joinPaths($path, $entry));
+            }
+            $this->fsDelegate->removeDir($path);
+        } else {
+            $this->fsDelegate->unlink($path);
+        }
+    }
+
 }
 
+?>
