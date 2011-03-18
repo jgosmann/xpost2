@@ -16,15 +16,24 @@ class FsManipulator {
     }
 
     public function copy($src, $dest) {
+        if ($this->fsDelegate->isDir($dest)) {
+            $dest = joinPaths($dest, $src);
+        }
+
         if ($this->fsDelegate->isDir($src)) {
+            $this->ensureDirExists($dest);
             foreach ($this->fsDelegate->readDir($src) as $file) {
                 $this->copy(joinPaths($src, $file), joinPaths($dest, $file));
             }
         }
         else {
-            if (!$this->fsDelegate->copy($src, $dest)) {
-                throw new FsException("Copying \"$src\" to \"$dest\" failed.");
-            }
+            $this->fsDelegate->copy($src, $dest);
+        }
+    }
+
+    public function ensureDirExists($path) {
+        if (!$this->fsDelegate->fileExists($path)) {
+            $this->fsDelegate->createDir($path);
         }
     }
 

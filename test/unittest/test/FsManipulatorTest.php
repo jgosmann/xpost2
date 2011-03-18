@@ -6,7 +6,7 @@ require_once 'include/helpers.php';
 
 use \Mockery as m;
 
-class FsManipulatorCopyTest extends PHPUnit_Framework_TestCase {
+class FsManipulatorTest extends PHPUnit_Framework_TestCase {
 
     private $fsDelegate;
     private $fsManipulator;
@@ -15,6 +15,10 @@ class FsManipulatorCopyTest extends PHPUnit_Framework_TestCase {
     {
         $this->fsDelegate = m::mock('FsDelegate');
         $this->fsDelegate->shouldReceive('isDir')->andReturn(false)
+            ->byDefault();
+        $this->fsDelegate->shouldReceive('fileExists')->andReturn(false)
+            ->byDefault();
+        $this->fsDelegate->shouldReceive('readDir')->andReturn(array())
             ->byDefault();
 
         $this->fsManipulator = new FsManipulator($this->fsDelegate);
@@ -26,24 +30,10 @@ class FsManipulatorCopyTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testCopiesSingleFile() {
-        $src = 'src-file.txt';
-        $dest = 'dest-filt.txt';
+        $src = 'src-file';
+        $dest = 'dest-filt';
 
-        $this->fsDelegate->shouldReceive('copy')->with($src, $dest)->once()
-            ->andReturn(true);
-
-        $this->fsManipulator->copy($src, $dest);
-    }
-
-    /**
-     * @expectedException FsException
-     */
-    public function testThrowsExceptionIfCopyFails() {
-        $src = 'src-file.txt';
-        $dest = 'dest-file.txt';
-
-        $this->fsDelegate->shouldReceive('copy')->with($src, $dest)->once()
-            ->andReturn(false);
+        $this->fsDelegate->shouldReceive('copy')->with($src, $dest)->once();
 
         $this->fsManipulator->copy($src, $dest);
     }
@@ -51,32 +41,77 @@ class FsManipulatorCopyTest extends PHPUnit_Framework_TestCase {
     public function testCopiesDirRecursive() {
         $src = 'src-dir';
         $dest = 'dest-dir';
-        $filesInDir = array('1.txt', '2.txt');
+        $filesInDir = array('1', '2');
 
-        $this->fsDelegate->shouldReceive('isDir')
-            ->with(m::notAnyOf($src, $dest))->andReturn(false);
-        $this->fsDelegate->shouldReceive('isDir')->with(m::anyOf($src, $dest))
-            ->andReturn(true);
+        $this->fsDelegate->shouldReceive('isDir')->with(m::not($src))
+            ->andReturn(false);
+        $this->fsDelegate->shouldReceive('isDir')->with($src)->andReturn(true);
+        $this->fsDelegate->shouldReceive('fileExists')->with($dest)
+            ->andReturn(false);
+        $this->fsDelegate->shouldReceive('createDir')->with($dest)->once();
         $this->fsDelegate->shouldReceive('readDir')->with($src)
             ->andReturn($filesInDir);
         for ($i = 0; $i < count($filesInDir); ++$i) {
             $this->fsDelegate->shouldReceive('copy')->with(
                     joinPaths($src, $filesInDir[$i]),
                     joinPaths($dest, $filesInDir[$i]))
-                ->once()->andReturn(true);
+                ->once();
         }
 
         $this->fsManipulator->copy($src, $dest);
     }
 
-    public function testThrowsExceptionIfCopyingDirToFile() {
-        // TODO
+    public function testCopiesFileIntoDir() {
+        $src = 'src-file';
+        $dest = 'dest-dir';
+
+        $this->fsDelegate->shouldReceive('isDir')->with($src)->andReturn(false);
+        $this->fsDelegate->shouldReceive('isDir')->with($dest)->andReturn(true);
+        $this->fsDelegate->shouldReceive('fileExists')->with($dest)
+            ->andReturn(true);
+        $this->fsDelegate->shouldReceive('copy')->with(
+            $src, joinPaths($dest, $src))->once();
+
+        $this->fsManipulator->copy($src, $dest);
     }
 
-    public function testCreatesDirIfCopyingDirToNonExistentDir() {
-        // TODO
+    public function testCopiesDirIntoDir() {
+        $src = 'src-dir';
+        $dest = 'dest-dir';
+        $resultingSubpath = joinPaths($dest, $src);
+
+        $this->fsDelegate->shouldReceive('isDir')->with($src)->andReturn(true);
+        $this->fsDelegate->shouldReceive('isDir')->with($dest)->andReturn(true);
+        $this->fsDelegate->shouldReceive('fileExists')->with(m::not($dest))
+            ->andReturn(false);
+        $this->fsDelegate->shouldReceive('fileExists')->with($dest)
+            ->andReturn(true);
+        $this->fsDelegate->shouldReceive('createDir')->with($resultingSubpath)
+            ->once();
+
+        $this->fsManipulator->copy($src, $dest);
     }
 
+
+
+    public function testDoesNothingIfEnsuresExistentDirExists() {
+        $dir = 'dir';
+
+        $this->fsDelegate->shouldReceive('fileExists')->with($dir)
+            ->andReturn(true);
+
+        $this->fsManipulator->ensureDirExists($dir);
+    }
+
+    public function testCreatesDirIfEnsuresNonexistentDirExists() {
+        $dir = 'dir';
+
+        $this->fsDelegate->shouldReceive('fileExists')->with($dir)
+            ->andReturn(false);
+        $this->fsDelegate->shouldReceive('createDir')->with($dir)->once();
+
+        $this->fsManipulator->ensureDirExists($dir);
+    }
 }
 
 ?>
