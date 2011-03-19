@@ -1,8 +1,6 @@
 <?php
 
-require_once 'Hamcrest/hamcrest.php';
-
-require_once 'include/helpers.php';
+require_once 'test/include/initTestClassLoader.php';
 
 class HelpersTest extends PHPUnit_Framework_TestCase {
 
