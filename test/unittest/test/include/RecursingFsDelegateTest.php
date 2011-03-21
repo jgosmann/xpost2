@@ -6,10 +6,10 @@ require_once 'include/helpers.php';
 
 use \Mockery as m;
 
-class FsManipulatorTest extends PHPUnit_Framework_TestCase {
+class RecursingFsDelegateTest extends PHPUnit_Framework_TestCase {
 
     private $fsDelegate;
-    private $fsManipulator;
+    private $recursingFsDelegate;
 
     public function setUp()
     {
@@ -21,7 +21,7 @@ class FsManipulatorTest extends PHPUnit_Framework_TestCase {
         $this->fsDelegate->shouldReceive('readDir')->andReturn(array())
             ->byDefault();
 
-        $this->fsManipulator = new FsManipulator($this->fsDelegate);
+        $this->recursingFsDelegate = new RecursingFsDelegate($this->fsDelegate);
     }
 
     public function teardown()
@@ -35,7 +35,7 @@ class FsManipulatorTest extends PHPUnit_Framework_TestCase {
 
         $this->fsDelegate->shouldReceive('copy')->with($src, $dest)->once();
 
-        $this->fsManipulator->copy($src, $dest);
+        $this->recursingFsDelegate->copy($src, $dest);
     }
 
     public function testCopiesDirRecursive() {
@@ -58,7 +58,7 @@ class FsManipulatorTest extends PHPUnit_Framework_TestCase {
                 ->once();
         }
 
-        $this->fsManipulator->copy($src, $dest);
+        $this->recursingFsDelegate->copy($src, $dest);
     }
 
     public function testCopiesFileIntoDir() {
@@ -72,7 +72,7 @@ class FsManipulatorTest extends PHPUnit_Framework_TestCase {
         $this->fsDelegate->shouldReceive('copy')->with(
             $src, joinPaths($dest, $src))->once();
 
-        $this->fsManipulator->copy($src, $dest);
+        $this->recursingFsDelegate->copy($src, $dest);
     }
 
     public function testCopiesDirIntoDir() {
@@ -89,42 +89,40 @@ class FsManipulatorTest extends PHPUnit_Framework_TestCase {
         $this->fsDelegate->shouldReceive('createDir')->with($resultingSubpath)
             ->once();
 
-        $this->fsManipulator->copy($src, $dest);
+        $this->recursingFsDelegate->copy($src, $dest);
     }
 
-
-
-    public function testDoesNothingIfEnsuresExistentDirExists() {
-        $dir = 'dir';
-
-        $this->fsDelegate->shouldReceive('fileExists')->with($dir)
-            ->andReturn(true);
-
-        $this->fsManipulator->ensureDirExists($dir);
-    }
-
-    public function testCreatesDirIfEnsuresNonexistentDirExists() {
-        $dir = 'dir';
-
-        $this->fsDelegate->shouldReceive('fileExists')->with($dir)
-            ->andReturn(false);
-        $this->fsDelegate->shouldReceive('createDir')->with($dir)->once();
-
-        $this->fsManipulator->ensureDirExists($dir);
-    }
-
-
-
-    public function testRemovesFile() {
+    public function testUnlinkRemovesFile() {
         $file = 'file';
 
         $this->fsDelegate->shouldReceive('unlink')->with($file)->once();
 
-        $this->fsManipulator->remove($file);
+        $this->recursingFsDelegate->unlink($file);
     }
 
-    public function testRemovesDirRecursive() {
+    public function testUnlinkRemovesDirRecursive() {
         $dir = 'dir';
+        $this->expectsRecursiveDeletionOfDir($dir);
+        $this->recursingFsDelegate->unlink($dir);
+    }
+
+    public function testRemoveDirRemovesDirRecursive() {
+        $dir = 'dir';
+        $this->expectsRecursiveDeletionOfDir($dir);
+        $this->recursingFsDelegate->removeDir($dir);
+    }
+
+    public function testOtherFunctionsBeingForwarded() {
+        $arg = 'dir';
+        $ret = true;
+        $this->genTestForwardingFunction('createDir', $arg);
+        $this->genTestForwardingFunctionWithReturnValue('fileExists', $arg,
+            $ret);
+        $this->genTestForwardingFunctionWithReturnValue('isDir', $arg, $ret);
+        $this->genTestForwardingFunctionWithReturnValue('readDir', $arg, $ret);
+    }
+
+    private function expectsRecursiveDeletionOfDir($dir) {
         $file = 'file';
         $pathToFile = joinPaths($dir, $file);
 
@@ -135,10 +133,20 @@ class FsManipulatorTest extends PHPUnit_Framework_TestCase {
             ->andReturn(array($file));
         $this->fsDelegate->shouldReceive('unlink')->with($pathToFile)->once();
         $this->fsDelegate->shouldReceive('removeDir')->with($dir)->once();
-
-        $this->fsManipulator->remove($dir);
     }
 
+    private function genTestForwardingFunction($function, $arg) {
+        $this->fsDelegate->shouldReceive($function)->with($arg)->once();
+        call_user_func(array($this->recursingFsDelegate, $function), $arg);
+    }
+
+    private function genTestForwardingFunctionWithReturnValue($function, $arg,
+             $ret) {
+         $this->fsDelegate->shouldReceive($function)->with($arg)->once()
+            ->andReturn($ret);
+         assertThat($ret, equalTo(call_user_func(
+             array($this->recursingFsDelegate, $function), $arg)));
+    }
 }
 
 ?>
