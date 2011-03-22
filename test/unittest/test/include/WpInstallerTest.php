@@ -17,13 +17,19 @@ class WpInstallerTest extends PHPUnit_Framework_TestCase {
     private $fsDelegate;
     private $wpInstaller;
     private $wpConfig;
+    private $sqlExecutor;
 
     public function setUp() {
         $this->wpFetcher = m::mock('WpFetcher');
         $this->fsDelegate = m::mock('RecursingFsDelegate');
         $this->wpConfig = m::mock('WpConfig');
-        $this->wpInstaller = new WpInstaller(self::cacheDir, $this->wpFetcher,
-            $this->fsDelegate);
+        $this->sqlExecutor = m::mock('SqlExecutor');
+
+        $this->wpConfig->shouldReceive('getDbConfig')->withNoArgs()
+            ->andReturn(new DbConfig())->byDefault();
+
+        $this->wpInstaller = new WpInstaller(self::cacheDir, $this->sqlExecutor,
+            $this->wpFetcher, $this->fsDelegate);
     }
 
     public function teardown()
@@ -56,7 +62,11 @@ class WpInstallerTest extends PHPUnit_Framework_TestCase {
         $this->fsDelegate->shouldReceive('copy')
             ->with(self::cacheDir, self::target)->once()->ordered();
         $this->wpConfig->shouldReceive('write')
-            ->with(self::target)->once()->ordered();
+            ->with(self::target)->once()->ordered('postCopy');
+        $this->sqlExecutor->shouldReceive('exec')->with(
+            '/DROP DATABASE IF EXISTS [^;]*;' .
+            '\s*CREATE DATABASE [^;]*;' . '\s*GRANT [^;]*;/')
+            ->once()->ordered('postCopy');
     }
 
 }

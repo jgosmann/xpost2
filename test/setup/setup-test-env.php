@@ -3,6 +3,10 @@
 // Depends: gettext, openssl, readline, svn
 
 require_once 'include/helpers.php';
+require_once 'include/ClassLoader.php';
+
+ClassLoader::addClassDir('include');
+ClassLoader::addClassDir('test/include');
 
 function printUsage() {
     echo gettext(<<<EOT
@@ -41,29 +45,6 @@ function getWpVersionToInstall() {
     }
 }
 
-function getSvnCheckoutDir() {
-    return joinPaths(HTDOCS_DIR, '.svn-checkout');
-}
-
-function prepareHtdocsDir() {
-    if (!file_exists(HTDOCS_DIR)) {
-        mkdir(HTDOCS_DIR, 0777, true);
-    }
-
-    system('rm -rf ' . escapeshellarg(HTDOCS_DIR) . '/*');
-}
-
-function fetchWpVersion($version) {
-    $repo = escapeshellarg(joinPaths(WP_SVN, 'tags', $version));
-    $dest = escapeshellarg(getSvnCheckoutDir());
-    if (file_exists($dest)) {
-        $action = 'switch';
-    } else {
-        $action = 'co';
-    }
-
-    system("svn $action $repo $dest");
-}
 
 function createWpInstallations($count) {
     $dbScript = '';
@@ -81,11 +62,6 @@ function createWpInstallations($count) {
     system("echo $dbScript | " . MYSQL_BIN . " -u $user -p");
 }
 
-function copyWpFiles($dest) {
-    $src = escapeshellarg(getSvnCheckoutDir());
-    $dest = escapeshellarg($dest);
-    system("cp -r $src $dest");
-}
 
 function createConfig($index, $dest) {
     $config = file_get_contents('test/setup/wp-config-template.php', true);
