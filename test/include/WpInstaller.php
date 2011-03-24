@@ -5,14 +5,17 @@ class WpInstaller {
     private $cacheDir;
     private $sqlExecutor;
     private $wpFetcher;
+    private $wpConfigWriter;
     private $fsDelegate;
 
     function __construct($cacheDir, SqlExecutor $sqlExecutor,
-            WpFetcher $wpFetcher = null,
+        WpFetcher $wpFetcher = null, WpConfigWriter $wpConfigWriter = null,
             RecursingFsDelegate $fsDelegate = null) {
         $this->cacheDir = $cacheDir;
         $this->sqlExecutor = $sqlExecutor;
         $this->wpFetcher = $wpFetcher or new WpFetcher();
+        $this->wpConfigWriter = $wpConfigWriter or new WpConfigWriter(
+            new FromWpApiSaltFetcher()); // FIXME salt generator
         $this->fsDelegate = $fsDelegate or new RecursingFsDelegate();
     }
 
@@ -20,7 +23,8 @@ class WpInstaller {
         $this->removePreviousInstallation($target);
         $this->wpFetcher->fetchVersion($version, $this->cacheDir);
         $this->fsDelegate->copy($this->cacheDir, $target);
-        $config->write($target);
+        $this->wpConfigWriter->write($config, joinPaths($target,
+            WpConfigWriter::DEFAULT_CONFIGFILE));
         $this->createDatabaseAndGrantPermissions($config->getDbConfig());
     }
 

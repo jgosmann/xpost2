@@ -1,4 +1,3 @@
-
 <?php
 
 class SvnException extends Exception {

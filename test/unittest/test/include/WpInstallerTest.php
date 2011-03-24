@@ -17,23 +17,27 @@ class WpInstallerTest extends PHPUnit_Framework_TestCase {
     private $fsDelegate;
     private $wpInstaller;
     private $wpConfig;
+    private $wpConfigWriter;
+    private $bufferedSqlExecutor;
     private $sqlExecutor;
 
     public function setUp() {
         $this->wpFetcher = m::mock('WpFetcher');
         $this->fsDelegate = m::mock('RecursingFsDelegate');
-        $this->wpConfig = m::mock('WpConfig');
+        $this->wpConfig = new WpConfig(new DbConfig());
+        $this->wpConfigWriter = m::mock('WpConfigWriter');
         $this->sqlExecutor = m::mock('SqlExecutor');
+        $this->bufferedSqlExecutor =
+            new BufferingSqlExecutor($this->sqlExecutor);
 
-        $this->wpConfig->shouldReceive('getDbConfig')->withNoArgs()
-            ->andReturn(new DbConfig())->byDefault();
-
-        $this->wpInstaller = new WpInstaller(self::cacheDir, $this->sqlExecutor,
-            $this->wpFetcher, $this->fsDelegate);
+        $this->wpInstaller = new WpInstaller(self::cacheDir, 
+            $this->bufferedSqlExecutor, $this->wpFetcher, $this->wpConfigWriter,
+            $this->fsDelegate);
     }
 
     public function teardown()
     {
+        $this->bufferedSqlExecutor->flush();
         m::close();
     }
 
@@ -61,8 +65,10 @@ class WpInstallerTest extends PHPUnit_Framework_TestCase {
             ->with(self::version, self::cacheDir)->once()->ordered();
         $this->fsDelegate->shouldReceive('copy')
             ->with(self::cacheDir, self::target)->once()->ordered();
-        $this->wpConfig->shouldReceive('write')
-            ->with(self::target)->once()->ordered('postCopy');
+        $this->wpConfigWriter->shouldReceive('write')->with(
+                m::type('WpConfig'),
+                joinPaths(self::target, WpConfigWriter::DEFAULT_CONFIGFILE))
+            ->once()->ordered('postCopy');
         $this->sqlExecutor->shouldReceive('exec')->with(
             '/DROP DATABASE IF EXISTS [^;]*;' .
             '\s*CREATE DATABASE [^;]*;' . '\s*GRANT [^;]*;/')

@@ -2,10 +2,10 @@
 
 class CliSvnDelegate implements SvnDelegate {
 
-    private $svnPath;
+    private $svnPathEscaped;
 
-    public function __construct($svnPath = 'svn') {
-        $this->svnPath = $svnPath;
+    public function __construct($svnPathEscaped = 'svn') {
+        $this->svnPathEscaped = escapeshellarg($svnPathEscaped);
     }
 
     public function listRepo($repo) {
@@ -29,7 +29,7 @@ class CliSvnDelegate implements SvnDelegate {
     private function execSvnCommand($command /*, ... */) {
         $args = implode(' ', func_get_args());
         $returnValue = 0;
-        $output = system("$svnPath $args", $returnValue);
+        $output = system("$svnPathEscaped $args", $returnValue);
         if ($returnValue != 0) {
             throw new SvnException(func_get_args(), $output);
         }
