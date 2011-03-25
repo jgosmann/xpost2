@@ -54,7 +54,25 @@ class WpMultiInstallerTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSuffixesDbNames() {
-        // TODO
+        $count = 3;
+        $dbNamePrefix = 'wp';
+        for ($i = 0; $i < $count; ++$i) {
+            $this->wpInstaller->shouldReceive('createInstallation')
+                ->with(m::any(), m::any(),
+                    wpConfigWithDbName($dbNamePrefix . $i))
+                ->once();
+        }
+        $this->wpMultiInstaller->createInstallations('target', 'version',
+            new WpConfig(new DbConfig($dbNamePrefix)), $count);
+    }
+
+    public function testLeavesConfigUnalteredExceptDbName() {
+        $config = new WpConfig(new DbConfig('dbName', 'user', 'password',
+            'host', 'charset', 'collate'), 'tblPrefix', 'lang', true);
+        $this->wpInstaller->shouldReceive('createInstallation')
+            ->with(m::any(), m::any(), equalsWpConfigExceptDbName($config));
+        $this->wpMultiInstaller->createInstallations('target', 'version',
+            $config, 1);
     }
 
 }
