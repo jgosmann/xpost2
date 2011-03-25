@@ -15,7 +15,7 @@ class WpInstaller {
         $this->sqlExecutor = $sqlExecutor;
         $this->wpFetcher = $wpFetcher or new WpFetcher();
         $this->wpConfigWriter = $wpConfigWriter or new WpConfigWriter(
-            new FromWpApiSaltFetcher()); // FIXME salt generator
+            new FromWpApiSaltFetcher());
         $this->fsDelegate = $fsDelegate or new RecursingFsDelegate();
     }
 
