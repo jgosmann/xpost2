@@ -1,6 +1,6 @@
 <?php
 
-require_once 'include/helpers.php';
+require_once 'helpers/src/helpers.php';
 
 class ClassLoader {
 

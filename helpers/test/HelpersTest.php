@@ -1,6 +1,6 @@
 <?php
 
-require_once 'test/include/initTestClassLoader.php';
+require_once 'helpers/initTestClassLoader.php';
 
 class HelpersTest extends PHPUnit_Framework_TestCase {
 

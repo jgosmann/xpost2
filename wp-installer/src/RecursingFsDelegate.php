@@ -1,12 +1,5 @@
 <?php
 
-require_once 'test/include/FsDelegate.php';
-require_once 'test/include/DefaultPhpFsDelegate.php';
-
-require_once 'test/include/FsException.php';
-
-require_once 'include/helpers.php';
-
 class RecursingFsDelegate implements FsDelegate {
 
     private $decorated;

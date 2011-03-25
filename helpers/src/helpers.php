@@ -1,5 +1,9 @@
 <?php
 
+require_once 'helpers/src/ClassLoader.php';
+
+ClassLoader::addClassDir('helpers/src');
+
 // This dir separator also works with windows. See:
 // http://us2.php.net/manual/en/ref.filesystem.php#73954
 define('DIR_SEPARATOR', '/');

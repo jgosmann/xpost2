@@ -1,8 +1,8 @@
 <?php
 
-require_once 'test/include/initTestClassLoader.php';
+require_once 'wp-installer/test/initTestClassLoader.php';
 
-require_once 'include/helpers.php';
+require_once 'helpers/helpers.php';
 
 use \Mockery as m;
 
