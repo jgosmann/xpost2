@@ -4,8 +4,8 @@ class RecursingFsDelegate implements FsDelegate {
 
     private $decorated;
 
-    public function __construct(FsDelegate $toDecorate = null) {
-        $this->decorated = $toDecorate or new DefaultPhpFsDelegate();
+    public function __construct(FsDelegate $toDecorate) {
+        $this->decorated = $toDecorate;
     }
 
     public function copy($src, $dest) {

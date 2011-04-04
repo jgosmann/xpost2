@@ -9,14 +9,13 @@ class WpInstaller {
     private $fsDelegate;
 
     function __construct($cacheDir, SqlExecutor $sqlExecutor,
-        WpFetcher $wpFetcher = null, WpConfigWriter $wpConfigWriter = null,
-            RecursingFsDelegate $fsDelegate = null) {
+        WpFetcher $wpFetcher, WpConfigWriter $wpConfigWriter,
+            RecursingFsDelegate $fsDelegate) {
         $this->cacheDir = $cacheDir;
         $this->sqlExecutor = $sqlExecutor;
-        $this->wpFetcher = $wpFetcher or new WpFetcher();
-        $this->wpConfigWriter = $wpConfigWriter or new WpConfigWriter(
-            new FromWpApiSaltFetcher());
-        $this->fsDelegate = $fsDelegate or new RecursingFsDelegate();
+        $this->wpFetcher = $wpFetcher;
+        $this->wpConfigWriter = $wpConfigWriter;
+        $this->fsDelegate = $fsDelegate;
     }
 
     public function createInstallation($target, $version, WpConfig $config) {

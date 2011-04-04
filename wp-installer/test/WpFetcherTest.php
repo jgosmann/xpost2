@@ -26,8 +26,8 @@ class WpFetcherTest extends PHPUnit_Framework_TestCase {
         $this->fsDelegate->shouldReceive('fileExists')->with(m::any())
             ->andReturn(false)->byDefault();
 
-        $this->wpFetcher = new WpFetcher(self::svnUrl, $this->svnDelegate,
-            $this->fsDelegate);
+        $this->wpFetcher = new WpFetcher($this->svnDelegate, $this->fsDelegate,
+            self::svnUrl);
     }
 
     public function teardown()

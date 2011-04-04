@@ -8,13 +8,13 @@ class WpFetcher {
     private $svnDelegate;
     private $fsDelegate;
 
-    public function __construct($wpSvnUrl = 'https://core.svn.wordpress.org/',
-            SvnDelegate $svnDelegate = null, FsDelegate $fsDelegate = null) {
+    public function __construct(SvnDelegate $svnDelegate,
+        FsDelegate $fsDelegate, $wpSvnUrl = 'https://core.svn.wordpress.org/') {
 
         $this->wpSvnUrl = $wpSvnUrl;
 
-        $this->svnDelegate = $svnDelegate or new CliSvnDelegate();
-        $this->fsDelegate = $fsDelegate or new FsDelegate();
+        $this->svnDelegate = $svnDelegate;
+        $this->fsDelegate = $fsDelegate;
 
         $this->tagsUrl = joinPaths($this->wpSvnUrl, self::tagsDir);
     }
