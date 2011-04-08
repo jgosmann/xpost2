@@ -15,8 +15,10 @@ $cacheDir = joinPaths(HTDOCS_DIR, '.wp-svn');
 $config = new WpConfig(new DbConfig(DB_NAME_PREFIX, DB_USER, DB_PASSWORD,
     DB_HOST, DB_CHARSET, DB_COLLATE), 'wp_', '', true);
 
-$wpInstallerFactory = new WpInstallerFactory(new CliSvnDelegate(SVN_BIN),
-    new CliSqlExecutor($mysqlUser, MYSQL_BIN), WP_SVN);
+$wpInstallerFactory = new WpInstallerFactory(
+    new CliSvnDelegate(SVN_BIN),
+    new BufferingSqlExecutor(new CliSqlExecutor($mysqlUser, MYSQL_BIN)),
+    WP_SVN);
 $wpMultiInstaller = $wpInstallerFactory->createWpMultiInstaller($cacheDir,
     new FromWpApiSaltFetcher(), WP_INST_PREFIX);
 
