@@ -1,6 +1,30 @@
+
 <?php
 
-require_once 'config-test-runtime.php';
+/**
+ * Directory for the testing environment Wordpress installations.
+ *
+ * All contents except .* will get removed when using the setup-test-env.php
+ * script.
+ *
+ * Example value: /opt/local/username/www/wp-test-env
+ */
+define('HTDOCS_DIR', '/opt/local/username/www/wp-test-env');
+
+/**
+ * URL to access htdocs dir. Make sure it ends with a slash!
+ *
+ * Example value: http://localhost/wp-test-env
+ */
+define('HTDOCS_URL', 'http://localhost/wp-test-env/');
+
+/**
+ * Prefix used for the testing environment Wordpress installation direcotries.
+ */
+define('WP_INST_PREFIX', 'wp');
+
+/** Password for the test users. */
+define('WP_USER_PASS', '');
 
 /** EMail address used for wordpress users. */
 define('WP_USER_MAIL', '');

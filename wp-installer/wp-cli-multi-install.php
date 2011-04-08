@@ -3,7 +3,7 @@
 require_once 'helpers/helpers.php';
 require_once 'wp-installer/wp-installer.php';
 
-require_once 'config-testenv-setup.php';
+require_once 'config-wp-installer.php';
 
 confirmOverride();
 
