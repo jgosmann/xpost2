@@ -9,7 +9,7 @@ class DefaultPhpFsDelegate implements FsDelegate {
     }
 
     public function createDir($path) {
-        if (mkdir($path)) {
+        if (!mkdir($path)) {
             throw new FsException("Creating directory \"$path\" failed.");
         }
     }

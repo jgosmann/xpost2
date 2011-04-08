@@ -41,7 +41,7 @@ class RecursingFsDelegateTest extends PHPUnit_Framework_TestCase {
     public function testCopiesDirRecursive() {
         $src = 'src-dir';
         $dest = 'dest-dir';
-        $filesInDir = array('1', '2');
+        $filesInDir = array('.', '..', '1', '2');
 
         $this->fsDelegate->shouldReceive('isDir')->with(m::not($src))
             ->andReturn(false);
@@ -52,10 +52,14 @@ class RecursingFsDelegateTest extends PHPUnit_Framework_TestCase {
         $this->fsDelegate->shouldReceive('readDir')->with($src)
             ->andReturn($filesInDir);
         for ($i = 0; $i < count($filesInDir); ++$i) {
-            $this->fsDelegate->shouldReceive('copy')->with(
+            $call = $this->fsDelegate->shouldReceive('copy')->with(
                     joinPaths($src, $filesInDir[$i]),
-                    joinPaths($dest, $filesInDir[$i]))
-                ->once();
+                    joinPaths($dest, $filesInDir[$i]));
+            if ($filesInDir[$i] == '.' || $filesInDir[$i] == '..') {
+                $call->never();
+            } else {
+                $call->once();
+            }
         }
 
         $this->recursingFsDelegate->copy($src, $dest);
@@ -76,9 +80,9 @@ class RecursingFsDelegateTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testCopiesDirIntoDir() {
-        $src = 'src-dir';
+        $src = 'somewhere/src-dir';
         $dest = 'dest-dir';
-        $resultingSubpath = joinPaths($dest, $src);
+        $resultingSubpath = joinPaths($dest, 'src-dir');
 
         $this->fsDelegate->shouldReceive('isDir')->with($src)->andReturn(true);
         $this->fsDelegate->shouldReceive('isDir')->with($dest)->andReturn(true);
@@ -91,6 +95,7 @@ class RecursingFsDelegateTest extends PHPUnit_Framework_TestCase {
 
         $this->recursingFsDelegate->copy($src, $dest);
     }
+
 
     public function testUnlinkRemovesFile() {
         $file = 'file';

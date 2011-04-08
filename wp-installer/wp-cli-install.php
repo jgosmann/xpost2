@@ -47,8 +47,9 @@ function getWpVersionToInstall() {
     if ($version == '') {
         $version = system('svn list '
             . escapeshellarg(joinPaths(WP_SVN, 'tags')) . '" | tail -1');
-        return trim($version, '/');
+        $version = trim($version, '/');
     }
+    return $version;
 }
 
 function getDbCreationUser() {

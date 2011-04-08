@@ -16,7 +16,7 @@ class CliSqlExecutor implements SqlExecutor {
 
     public function exec($statement) {
         $retVal = 0;
-        $output = system("$this->mysqlPath -u $this->user -p <<<"
+        $output = system("$this->mysqlPathEscaped -u $this->userEscaped -p <<<"
             . escapeshellarg($statement), $retVal);
         if ($retVal != 0) {
             throw new SqlException($statement, $output);

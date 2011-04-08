@@ -15,11 +15,11 @@ class WpConfigWriter {
     }
 
     public function getStringRepresentation(WpConfig $config) {
-        return implode("\n", getStatements($config));
+        return implode("\n", $this->getStatements($config));
     }
 
     public function write($config, $file) {
-        file_put_contents($file, getStringRepresentation($config));
+        file_put_contents($file, $this->getStringRepresentation($config));
     }
 
     protected function getStatements(WpConfig $config) {
@@ -31,7 +31,7 @@ class WpConfigWriter {
             pcg::asDefine('DB_PASSWORD', $config->getDbConfig()->password),
             pcg::asDefine('DB_HOST', $config->getDbConfig()->host),
             pcg::asDefine('DB_CHARSET', $config->getDbConfig()->charset),
-            pcg::asDefine('DB_COLLATE', $config->getDbConfig()->colllate),
+            pcg::asDefine('DB_COLLATE', $config->getDbConfig()->collate),
 
             $this->saltGenerator->getSaltDefines(),
 

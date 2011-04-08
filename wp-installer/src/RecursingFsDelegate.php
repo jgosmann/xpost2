@@ -10,7 +10,8 @@ class RecursingFsDelegate implements FsDelegate {
 
     public function copy($src, $dest) {
         if ($this->isDir($dest)) {
-            $dest = joinPaths($dest, $src);
+            $explodedPath = explode('/', $src);
+            $dest = joinPaths($dest, $explodedPath[count($explodedPath) - 1]);
         }
 
         if ($this->isDir($src)) {
@@ -58,7 +59,9 @@ class RecursingFsDelegate implements FsDelegate {
     private function copyDir($src, $dest) {
         $this->ensureDirExists($dest);
         foreach ($this->readDir($src) as $file) {
-            $this->copy(joinPaths($src, $file), joinPaths($dest, $file));
+            if (!$this->isSpecialDir($file)) {
+                $this->copy(joinPaths($src, $file), joinPaths($dest, $file));
+            }
         }
     }
 
