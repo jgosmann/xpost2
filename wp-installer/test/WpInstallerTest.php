@@ -52,7 +52,7 @@ class WpInstallerTest extends PHPUnit_Framework_TestCase {
     public function testRemovesOldInstallation() {
         $this->fsDelegate->shouldReceive('fileExists')->with(self::target)
             ->andReturn(true);
-        $this->fsDelegate->shouldReceive('remove')->with(self::target)
+        $this->fsDelegate->shouldReceive('unlink')->with(self::target)
             ->once()->ordered();
         $this->expectInstallation();
 

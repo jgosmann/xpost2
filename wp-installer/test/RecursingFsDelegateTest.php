@@ -112,6 +112,36 @@ class RecursingFsDelegateTest extends PHPUnit_Framework_TestCase {
         $this->recursingFsDelegate->removeDir($dir);
     }
 
+    public function testRemoveDirDoesNotRemoveCurrentDirectory() {
+        $dir = '.';
+        $this->expectsDirNotToBeDeleted($dir);
+        $this->recursingFsDelegate->removeDir($dir);
+    }
+
+    public function testRemoveDirDoesNotRemoveParentDirectory() {
+        $dir = '..';
+        $this->expectsDirNotToBeDeleted($dir);
+        $this->recursingFsDelegate->removeDir($dir);
+    }
+
+    public function testRemoveDirDoesNotRemoveDotDirectory() {
+        $dir = 'path/.';
+        $this->expectsDirNotToBeDeleted($dir);
+        $this->recursingFsDelegate->removeDir($dir);
+    }
+
+    public function testRemoveDirDoesNotRemoveDoubleDotDirectory() {
+        $dir = 'path/path/..';
+        $this->expectsDirNotToBeDeleted($dir);
+        $this->recursingFsDelegate->removeDir($dir);
+    }
+
+    public function testRemoveDirDoesRemoveDirEndingWithDots() {
+        $dir = 'path..';
+        $this->expectsRecursiveDeletionOfDir($dir);
+        $this->recursingFsDelegate->removeDir($dir);
+    }
+
     public function testOtherFunctionsBeingForwarded() {
         $arg = 'dir';
         $ret = true;
@@ -133,6 +163,11 @@ class RecursingFsDelegateTest extends PHPUnit_Framework_TestCase {
             ->andReturn(array($file));
         $this->fsDelegate->shouldReceive('unlink')->with($pathToFile)->once();
         $this->fsDelegate->shouldReceive('removeDir')->with($dir)->once();
+    }
+
+    public function expectsDirNotToBeDeleted($dir) {
+        $this->fsDelegate->shouldReceive('isDir')->with($dir)->andReturn(true);
+        $this->fsDelegate->shouldReceive('removeDir')->with($dir)->never();
     }
 
     private function genTestForwardingFunction($function, $arg) {

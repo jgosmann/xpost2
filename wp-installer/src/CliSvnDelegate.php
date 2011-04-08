@@ -4,8 +4,8 @@ class CliSvnDelegate implements SvnDelegate {
 
     private $svnPathEscaped;
 
-    public function __construct($svnPathEscaped = 'svn') {
-        $this->svnPathEscaped = escapeshellarg($svnPathEscaped);
+    public function __construct($svnPath = 'svn') {
+        $this->svnPathEscaped = escapeshellarg($svnPath);
     }
 
     public function listRepo($repo) {

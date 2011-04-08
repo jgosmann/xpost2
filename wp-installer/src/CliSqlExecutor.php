@@ -5,9 +5,9 @@ class CliSqlExecutor implements SqlExecutor {
     private $userEscaped;
     private $mysqlPathEscaped;
 
-    function __construct($userEscaped, $mysqlPathEscaped = 'mysql') {
-        $this->userEscaped = escapeshellarg($userEscaped);
-        $this->mysqlPathEscaped = escapeshellarg($mysqlPathEscaped);
+    function __construct($user, $mysqlPath = 'mysql') {
+        $this->userEscaped = escapeshellarg($user);
+        $this->mysqlPathEscaped = escapeshellarg($mysqlPath);
     }
 
     public function getUser() {

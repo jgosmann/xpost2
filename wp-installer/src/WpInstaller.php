@@ -9,7 +9,7 @@ class WpInstaller {
     private $fsDelegate;
 
     function __construct($cacheDir, SqlExecutor $sqlExecutor,
-        WpFetcher $wpFetcher, WpConfigWriter $wpConfigWriter,
+            WpFetcher $wpFetcher, WpConfigWriter $wpConfigWriter,
             RecursingFsDelegate $fsDelegate) {
         $this->cacheDir = $cacheDir;
         $this->sqlExecutor = $sqlExecutor;
@@ -29,7 +29,7 @@ class WpInstaller {
 
     private function removePreviousInstallation($target) {
         if ($this->fsDelegate->fileExists($target)) {
-            $this->fsDelegate->remove($target);
+            $this->fsDelegate->unlink($target);
         }
     }
 

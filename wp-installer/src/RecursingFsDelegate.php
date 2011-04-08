@@ -37,6 +37,10 @@ class RecursingFsDelegate implements FsDelegate {
     }
 
     public function removeDir($path) {
+        if (RecursingFsDelegate::isSpecialDir($path)) {
+            return;
+        }
+
         foreach ($this->readDir($path) as $entry) {
             $this->unlink(joinPaths($path, $entry));
         }
@@ -62,6 +66,13 @@ class RecursingFsDelegate implements FsDelegate {
         if (!$this->fileExists($path)) {
             $this->createDir($path);
         }
+    }
+
+    private static function isSpecialDir($path) {
+        $len = strlen($path);
+        return $path === '.' || $path === '..'
+            || ($len >= 2 && substr($path, $len - 2) === '/.')
+            || ($len >= 3 && substr($path, $len - 3) === '/..');
     }
 
 }
