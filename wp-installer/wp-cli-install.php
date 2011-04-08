@@ -45,8 +45,8 @@ function getWpVersionToInstall() {
     $version = readline(gettext(
         'Wordpress version to fetch [enter for latest]: '));
     if ($version == '') {
-        $version = system('svn list '
-            . escapeshellarg(joinPaths(WP_SVN, 'tags')) . '" | tail -1');
+        $version = system(escapeshellarg(SVN_BIN) . ' list '
+            . escapeshellarg(joinPaths(WP_SVN, 'tags')) . ' | tail -1');
         $version = trim($version, '/');
     }
     return $version;
