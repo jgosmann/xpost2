@@ -1,16 +1,16 @@
 <?php
 
-require_once 'test-setup-config.php';
+require_once 'config-wp-installer.php';
 
 require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
 require_once 'Hamcrest/hamcrest.php';
 
-require_once 'include/helpers.php';
+require_once 'helpers/helpers.php';
 
 class WordpressDbInstaller extends PHPUnit_Extensions_SeleniumTestCase {
 
     public function setUp() {
-        $this->setBrowser(TEST_BROWSER);
+        $this->setBrowser(SELENIUM_BROWSER);
         $this->setBrowserUrl(HTDOCS_URL);
     }
 
@@ -27,14 +27,14 @@ class WordpressDbInstaller extends PHPUnit_Extensions_SeleniumTestCase {
         $this->type('admin_email', WP_USER_MAIL);
         $this->click('blog_public');
         $this->click('Submit');
-        $this->waitForPageToLoad(TEST_TIMEOUT);
+        $this->waitForPageToLoad(SELENIUM_TIMEOUT);
 
         assertThat($this->isTextPresent("Success"));
     }
 
     public function installationsProvider() {
         $installations = array();
-        for ($i = 0; $i < 3; ++$i) { // FIXME: remove magic number
+        for ($i = 0; $i < WP_INST_COUNT; ++$i) {
             $installations[] = array($i);
         }
         return $installations;

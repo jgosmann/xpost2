@@ -59,6 +59,20 @@ define('MYSQL_BIN', 'mysql5');
 /** Call to svn binary. */
 define('SVN_BIN', 'svn');
 
+/**
+ * Browser to use to execute database installation. Specifiy this as you would
+ * in an Selenium setBrowser(...) call.
+ *
+ * http://seleniumhq.org/
+ */
+define('SELENIUM_BROWSER', '*firefox');
+
+/**
+ * Timeout in milliseconds for Selenium actions which are used for the final 
+ * database installation.
+ */
+define('SELENIUM_TIMEOUT', 30000);
+
 /** SVN address for fetching Wordpress versions. */
 define('WP_SVN', 'https://core.svn.wordpress.org/');
 
