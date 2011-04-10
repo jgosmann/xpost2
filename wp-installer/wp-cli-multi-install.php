@@ -73,6 +73,13 @@ function getWpVersionToInstall() {
 }
 
 function getDbCreationUser() {
+    echo gettext(<<<EOT
+Please enter MySQL user for db creation, you will be asked for the password
+later. Remember to enter this users password when you are asked to enter a
+password. The prompt might not state that you should enter the MySQL password.
+
+EOT
+    );
     return readline(gettext('MySQL user for db creation: '));
 }
 
