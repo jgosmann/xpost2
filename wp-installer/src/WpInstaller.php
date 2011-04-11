@@ -39,7 +39,7 @@ class WpInstaller {
             CREATE DATABASE `$dbConfig->dbName`;
             GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER,
                 CREATE TEMPORARY TABLES, CREATE VIEW, EVENT, TRIGGER, SHOW VIEW,
-                CREATE ROUTINE, ALTER ROUTINE, EXECUTE
+                CREATE ROUTINE, ALTER ROUTINE, EXECUTE, LOCK TABLES
                 ON `$dbConfig->dbName` . *
                 TO '$dbConfig->user'@'$dbConfig->host';
 EOT

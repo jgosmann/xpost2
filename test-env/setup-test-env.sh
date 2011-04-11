@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo <<EOT
+cat <<EOT
 This script setups the Xpost 2 test environment needed to run the end to end
 tests. It will setup multiple Wordpress installations.
 
@@ -11,7 +11,7 @@ This script needs the following to be installed:
     - including Readline support <http://php.net/manual/de/book.readline.php>
 - PHP Unit Testing Framework <https://github.com/sebastianbergmann/phpunit/>
 - Subversion/SVN <http://subversion.tigris.org/>
-- MySQL <http://mysql.com/>
+- MySQL, including mysqldump <http://mysql.com/>
 - A webserver, e.g. Apache HTTP Server <http://httpd.apache.org/>
 - Selenium Server <http://seleniumhq.org/>
 - A browser compatible with Selenium, e.g. Firefox <http://www.mozilla.org/>
@@ -24,9 +24,12 @@ Make sure ...
 
 EOT
 
-cd $(dirname $0)
+cd $(dirname $0)/..
+
+php test-env/create-test-env-dirs.php
 php wp-installer/wp-cli-multi-install.php
 phpunit wp-installer/wp-phpunit-db-install.php
+php test-env/create-db-dumps.php
 
 echo "All done."
 

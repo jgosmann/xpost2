@@ -53,8 +53,14 @@ define('DB_CHARSET', 'utf8');
 /** The Database Collate type. Don't change this if in doubt. */
 define('DB_COLLATE', '');
 
+/** Test environment data directory. */
+define('TEST_ENV_DATADIR', 'test-env/data');
+
 /** Call to mysql binary. */
 define('MYSQL_BIN', 'mysql');
+
+/** Call to mysqldump binary. */
+define('MYSQL_DUMP_BIN', 'mysqldump');
 
 /** Call to svn binary. */
 define('SVN_BIN', 'svn');
