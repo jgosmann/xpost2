@@ -37,7 +37,14 @@ class WpConfigWriter {
 
             pcg::asAssignment('table_prefix', $config->getTablePrefix()),
             pcg::asDefine('WPLANG', $config->getLanguage()),
+
+            /* normal wp_cron may lead to warnings which are not suppressed in
+             * debug mode and can influence functioning. Using the alternate
+             * wp_cron helps. See also
+             * <http://core.trac.wordpress.org/ticket/11831> 
+             */
             pcg::asDefine('WP_DEBUG', $config->isDebugEnabled()),
+            pcg::asDefine('ALTERNATE_WP_CRON', $config->isDebugEnabled()),
 
             $this->getFooter());
     }

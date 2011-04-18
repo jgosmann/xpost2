@@ -18,8 +18,8 @@ This script needs the following to be installed:
 
 Make sure ...
 - that php and phpunit are in the search path.
-- that you copied wp-installer/sample-config-wp-installer.php to
-  config-wp-installer.php and filled in the correct settings.
+- that you copied test-env/sample-config-test-env.php to config-test-env.php and
+  filled in the correct settings.
 - that you have your webserver, MySQL and Selenium running.
 
 EOT
@@ -29,6 +29,7 @@ cd $(dirname $0)/..
 php test-env/create-test-env-dirs.php
 php wp-installer/wp-cli-multi-install.php
 phpunit wp-installer/wp-phpunit-db-install.php
+phpunit wp-installer/wp-phpunit-enable-xmlrpc.php
 php test-env/create-db-dumps.php
 
 echo "All done."
