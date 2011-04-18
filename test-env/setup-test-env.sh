@@ -29,7 +29,7 @@ cd $(dirname $0)/..
 php test-env/create-test-env-dirs.php
 php wp-installer/wp-cli-multi-install.php
 phpunit wp-installer/wp-phpunit-db-install.php
-phpunit wp-installer/wp-phpunit-enable-xmlrpc.php
+phpunit test-env/wp-phpunit-enable-xmlrpc.php
 php test-env/create-db-dumps.php
 
 echo "All done."
